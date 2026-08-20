@@ -3,192 +3,1555 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>Connect 4 Connection Challenge</title>
-<meta name="description" content="DC National Guard Connect 4 Connection Challenge">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<meta
+  name="description"
+  content="DC National Guard Connect 4 Connection Challenge"
+/>
+
 <style>
-:root{--teal:#10b8b0;--purple:#7041a6;--ink:#101827;--bg:#f5f7fb;--white:#fff}
-*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,#f8fbfb,#f3eef9);color:var(--ink)}
-header{background:linear-gradient(100deg,var(--teal),var(--purple));color:white;padding:28px 18px;text-align:center}
-header h1{font-size:clamp(30px,6vw,58px);margin:0;font-weight:900;letter-spacing:-2px}
-header p{margin:8px 0 0;font-size:18px;font-weight:700}
-main{max-width:1050px;margin:auto;padding:20px}
-.card{background:var(--white);border-radius:22px;padding:22px;margin:16px 0;box-shadow:0 10px 35px #00000012}
-h2{margin-top:0}.row{display:flex;gap:12px;flex-wrap:wrap}.row>*{flex:1}
-input,button,select{width:100%;padding:14px;border-radius:12px;border:1px solid #d8dce6;font-size:16px}
-button{border:0;background:var(--purple);color:white;font-weight:800;cursor:pointer}button.teal{background:var(--teal)}button:disabled{opacity:.45;cursor:not-allowed}
-.hidden{display:none!important}.status{font-weight:800;text-align:center;padding:10px;border-radius:12px;background:#eef3f8}
-.challenge{border:3px solid var(--teal);background:#effcfb;border-radius:18px;padding:18px;text-align:center;font-size:20px;font-weight:800}
-.board{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;background:#27335a;padding:10px;border-radius:18px;max-width:560px;margin:18px auto}
-.cell{aspect-ratio:1;background:#e9edf4;border-radius:50%;box-shadow:inset 0 3px 6px #0002;cursor:pointer}
-.cell.teal{background:var(--teal)}.cell.purple{background:var(--purple)}
-.names{display:flex;justify-content:space-between;font-weight:900;font-size:18px}.score{font-size:34px;font-weight:900;text-align:center}
-.small{font-size:13px;color:#586174}.center{text-align:center}
+:root{
+  --teal:#10b8b0;
+  --purple:#7041a6;
+  --dark-purple:#4e2d78;
+  --ink:#101827;
+  --bg:#f5f7fb;
+  --white:#ffffff;
+  --light-teal:#effcfb;
+  --light-purple:#f4effa;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:linear-gradient(135deg,#f8fbfb,#f3eef9);
+  color:var(--ink);
+}
+
+header{
+  background:linear-gradient(100deg,var(--teal),var(--purple));
+  color:white;
+  padding:28px 18px;
+  text-align:center;
+}
+
+header h1{
+  font-size:clamp(30px,6vw,58px);
+  margin:0;
+  font-weight:900;
+  letter-spacing:-2px;
+}
+
+header p{
+  margin:8px 0 0;
+  font-size:18px;
+  font-weight:700;
+}
+
+main{
+  max-width:1050px;
+  margin:auto;
+  padding:20px;
+}
+
+.card{
+  background:var(--white);
+  border-radius:22px;
+  padding:22px;
+  margin:16px 0;
+  box-shadow:0 10px 35px #00000012;
+}
+
+h2{
+  margin-top:0;
+}
+
+.row{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.row>*{
+  flex:1;
+  min-width:200px;
+}
+
+input,
+button,
+select{
+  width:100%;
+  padding:14px;
+  border-radius:12px;
+  border:1px solid #d8dce6;
+  font-size:16px;
+}
+
+button{
+  border:0;
+  background:var(--purple);
+  color:white;
+  font-weight:800;
+  cursor:pointer;
+  transition:.2s;
+}
+
+button:hover{
+  transform:translateY(-1px);
+  filter:brightness(1.05);
+}
+
+button.teal{
+  background:var(--teal);
+}
+
+button:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+  transform:none;
+}
+
+.hidden{
+  display:none!important;
+}
+
+.center{
+  text-align:center;
+}
+
+.small{
+  font-size:13px;
+  color:#586174;
+}
+
+/* FEELING CHECK-IN */
+
+.feeling-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+  margin-top:20px;
+}
+
+.feeling{
+  background:white;
+  color:var(--ink);
+  border:2px solid #e2e5ed;
+  padding:18px;
+  font-size:17px;
+}
+
+.feeling:hover{
+  border-color:var(--teal);
+  background:var(--light-teal);
+}
+
+.feeling.selected{
+  border-color:var(--teal);
+  background:var(--light-teal);
+  box-shadow:0 0 0 3px #10b8b033;
+}
+
+.feeling-emoji{
+  display:block;
+  font-size:32px;
+  margin-bottom:6px;
+}
+
+.checkin-message{
+  margin-top:20px;
+  padding:18px;
+  background:var(--light-purple);
+  border-radius:16px;
+  font-weight:700;
+}
+
+/* CHALLENGE */
+
+.challenge{
+  border:3px solid var(--teal);
+  background:var(--light-teal);
+  border-radius:18px;
+  padding:18px;
+  text-align:center;
+  font-size:20px;
+  font-weight:800;
+}
+
+/* GAME */
+
+.names{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  font-weight:900;
+  font-size:18px;
+}
+
+.score{
+  font-size:34px;
+  font-weight:900;
+  text-align:center;
+}
+
+.board{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:8px;
+  background:#27335a;
+  padding:10px;
+  border-radius:18px;
+  max-width:560px;
+  margin:18px auto;
+}
+
+.cell{
+  aspect-ratio:1;
+  background:#e9edf4;
+  border-radius:50%;
+  box-shadow:inset 0 3px 6px #0002;
+  cursor:pointer;
+  transition:.15s;
+}
+
+.cell:hover{
+  transform:scale(.94);
+}
+
+.cell.teal{
+  background:var(--teal);
+}
+
+.cell.purple{
+  background:var(--purple);
+}
+
+.turn-message{
+  text-align:center;
+  font-size:20px;
+  font-weight:900;
+  margin:10px 0;
+}
+
+.connection-count{
+  color:var(--purple);
+}
+
+/* RESPONSIVE */
+
+@media(max-width:600px){
+
+  main{
+    padding:12px;
+  }
+
+  .card{
+    padding:17px;
+  }
+
+  .feeling-grid{
+    grid-template-columns:1fr;
+  }
+
+  .names{
+    font-size:14px;
+  }
+
+  .challenge{
+    font-size:17px;
+  }
+
+  .board{
+    gap:5px;
+    padding:7px;
+  }
+}
 </style>
 </head>
+
 <body>
+
 <header>
-<h1>CONNECT <span style="color:#eaffff">4</span></h1>
-<p>CONNECTION CHALLENGE • One Move. One Connection. One Life Impacted.</p>
+
+  <h1>
+    CONNECT <span style="color:#eaffff">4</span>
+  </h1>
+
+  <p>
+    CONNECTION CHALLENGE
+    <br>
+    One Move. One Connection. One Life Impacted.
+  </p>
+
 </header>
+
 <main>
-<div class="card" id="setup">
-<h2>Play Connect 4</h2>
-<p><b>You vs. the Connection Bot.</b> Complete a connection challenge before every move, then try to connect four.</p>
-<div class="row">
-<div><input id="name" placeholder="Your name"></div>
-<div><select id="team"><option value="teal">🩵 Teal Team</option><option value="purple">💜 Purple Team</option></select></div>
-<div><select id="difficulty"><option value="easy">🟢 Easy</option><option value="medium" selected>🟡 Medium</option><option value="hard">🔴 Hard</option></select></div>
-</div>
-<div style="margin-top:12px"><button class="teal" onclick="startComputerGame()">PLAY NOW</button></div>
-<p class="small">The Connection Bot is your opponent. No second person needs to be online.</p>
+
+<!-- ============================= -->
+<!-- FEELING CHECK-IN -->
+<!-- ============================= -->
+
+<div class="card" id="checkin">
+
+  <div class="center">
+
+    <h2>How are you feeling today?</h2>
+
+    <p>
+      Before you play, take a moment to check in with yourself.
+    </p>
+
+  </div>
+
+  <div class="feeling-grid">
+
+    <button class="feeling" onclick="selectFeeling(this,'good')">
+      <span class="feeling-emoji">😊</span>
+      I'm doing good
+    </button>
+
+    <button class="feeling" onclick="selectFeeling(this,'okay')">
+      <span class="feeling-emoji">😐</span>
+      I'm okay
+    </button>
+
+    <button class="feeling" onclick="selectFeeling(this,'rough')">
+      <span class="feeling-emoji">😔</span>
+      I'm having a rough day
+    </button>
+
+    <button class="feeling" onclick="selectFeeling(this,'stressed')">
+      <span class="feeling-emoji">😣</span>
+      I'm stressed
+    </button>
+
+    <button class="feeling" onclick="selectFeeling(this,'talk')">
+      <span class="feeling-emoji">🫶</span>
+      I just need someone to talk to
+    </button>
+
+  </div>
+
+  <div
+    id="checkinMessage"
+    class="checkin-message hidden center"
+  ></div>
+
+  <div style="margin-top:15px">
+
+    <button
+      id="continueButton"
+      class="teal"
+      onclick="continueToGame()"
+      disabled
+    >
+      CONTINUE
+    </button>
+
+  </div>
+
 </div>
 
-<div class="card hidden" id="lobby">
-<div class="center"><h2>Game Room</h2><div class="score" id="roomCode"></div><p>Share this code with your opponent.</p></div>
-<div id="players"></div>
+
+<!-- ============================= -->
+<!-- GAME SETUP -->
+<!-- ============================= -->
+
+<div class="card hidden" id="setup">
+
+  <h2>Ready to Play Connect 4?</h2>
+
+  <p>
+    You are playing against the <b>Connection Bot.</b>
+  </p>
+
+  <p>
+    Before every move, complete a connection challenge.
+    Then make your move on the board.
+  </p>
+
+  <div class="row">
+
+    <div>
+      <label><b>Your Name</b></label>
+      <input
+        id="name"
+        placeholder="Enter your name"
+        maxlength="30"
+      >
+    </div>
+
+    <div>
+      <label><b>Your Team</b></label>
+
+      <select id="team">
+
+        <option value="teal">
+          🩵 Teal Team
+        </option>
+
+        <option value="purple">
+          💜 Purple Team
+        </option>
+
+      </select>
+
+    </div>
+
+    <div>
+      <label><b>Difficulty</b></label>
+
+      <select id="difficulty">
+
+        <option value="easy">
+          🟢 Easy
+        </option>
+
+        <option value="medium" selected>
+          🟡 Medium
+        </option>
+
+        <option value="hard">
+          🔴 Hard
+        </option>
+
+      </select>
+
+    </div>
+
+  </div>
+
+  <div style="margin-top:12px">
+
+    <button
+      class="teal"
+      onclick="startComputerGame()"
+    >
+      PLAY NOW
+    </button>
+
+  </div>
+
 </div>
+
+
+<!-- ============================= -->
+<!-- GAME -->
+<!-- ============================= -->
 
 <div class="card hidden" id="game">
-<div class="names"><span id="p1">🩵 Teal</span><span id="turn">Waiting…</span><span id="p2">💜 Purple</span></div>
-<div class="challenge" id="challenge">Complete your connection challenge before making your move.</div>
-<div class="center" style="margin:12px 0"><button id="done" class="teal" onclick="completeChallenge()">I MADE THE CONNECTION!</button></div>
-<div class="board" id="board"></div>
-<div class="center"><button onclick="newChallenge()">Get a different challenge</button></div>
+
+  <div class="names">
+
+    <span id="p1">
+      🩵 Player
+    </span>
+
+    <span id="p2">
+      💜 Connection Bot
+    </span>
+
+  </div>
+
+  <div
+    class="turn-message"
+    id="turn"
+  >
+    Your Turn
+  </div>
+
+  <div
+    class="challenge"
+    id="challenge"
+  >
+    Complete your connection challenge before making your move.
+  </div>
+
+  <div
+    class="center"
+    style="margin:12px 0"
+  >
+
+    <button
+      id="done"
+      class="teal"
+      onclick="completeChallenge()"
+      disabled
+    >
+      I MADE THE CONNECTION!
+    </button>
+
+  </div>
+
+  <div
+    class="board"
+    id="board"
+  ></div>
+
+  <div class="center">
+
+    <button
+      onclick="newChallenge()"
+    >
+      Get a Different Challenge
+    </button>
+
+  </div>
+
 </div>
 
-<div class="card hidden" id="end">
-<h2 class="center" id="result"></h2>
-<p class="center">Keep the connection going. Reach out. Check in. Be there.</p>
-<div class="center"><button class="teal" onclick="location.reload()">Play Again</button></div>
+
+<!-- ============================= -->
+<!-- GAME END -->
+<!-- ============================= -->
+
+<div
+  class="card hidden"
+  id="end"
+>
+
+  <h2
+    class="center"
+    id="result"
+  ></h2>
+
+  <p class="center">
+    Keep the connection going.
+    Reach out. Check in. Be there.
+  </p>
+
+  <div class="center">
+
+    <button
+      class="teal"
+      onclick="playAgain()"
+    >
+      PLAY AGAIN
+    </button>
+
+  </div>
+
 </div>
+
+
+<!-- ============================= -->
+<!-- CONNECTION COUNTER -->
+<!-- ============================= -->
 
 <div class="card">
-<h2>Armory Connection Counter</h2>
-<div class="score" id="counter">0</div>
-<p class="center">connections made</p>
-</div>
-</main>
-<script src="config.js"></script>
-<script>
-const challenges=[
-"Text someone you miss.","Call someone you have not talked to in a while.",
-"Check in with your battle buddy.","Ask someone: “How are you really doing?”",
-"Tell someone you appreciate them.","Thank someone who has supported you.",
-"Introduce yourself to someone you do not know.","Invite someone to lunch or a break.",
-"Send someone an encouraging message.","Ask a teammate how you can support them.",
-"Reconnect with someone from your past.","Tell someone: “You matter to me.”",
-"Take a moment to listen without trying to fix anything.",
-"Ask someone what they are looking forward to.","Check on someone who may be having a hard week.",
-"Reach out to someone who has been quiet lately."
-];
-let supa=null, channel=null, roomId=null, me=null, game=null, challengeDone=false;
-const cfg=window.CONNECT4_CONFIG||{};
-if(cfg.url&&cfg.key) supa=window.supabase.createClient(cfg.url,cfg.key);
 
-function requireSupa(){if(!supa){alert("The website is built, but the Supabase connection still needs to be configured in config.js.");return false}return true}
-function code(){return Math.random().toString(36).slice(2,8).toUpperCase()}
-function pick(){return challenges[Math.floor(Math.random()*challenges.length)]}
-function newChallenge(){document.getElementById('challenge').textContent=pick();challengeDone=false;document.getElementById('done').disabled=false}
-function completeChallenge(){challengeDone=true;document.getElementById('done').disabled=true;document.getElementById('challenge').textContent="Connection made! Now make your move.";broadcast({type:"challenge"})}
-function boardInit(){game={grid:Array.from({length:6},()=>Array(7).fill(null)),turn:"teal",winner:null};render()}
-function render(){
- const b=document.getElementById("board");b.innerHTML="";
- game.grid.flat().forEach((v,i)=>{let c=document.createElement("div");c.className="cell "+(v||"");c.onclick=()=>move(i%7);b.appendChild(c)});
- document.getElementById("turn").textContent=game.winner?("Winner: "+game.winner.toUpperCase()):("Turn: "+game.turn.toUpperCase());
- document.getElementById("done").disabled=game.turn!==me.team||challengeDone===false;
+  <h2 class="center">
+    Connection Counter
+  </h2>
+
+  <div
+    class="score connection-count"
+    id="counter"
+  >
+    0
+  </div>
+
+  <p class="center">
+    connections made through this challenge
+  </p>
+
+  <p class="small center">
+    Every connection starts with one small step.
+  </p>
+
+</div>
+
+
+</main>
+
+
+<script>
+
+/* =========================================
+   CONNECTION CHALLENGES
+========================================= */
+
+const challenges = [
+
+  "Text someone you miss.",
+
+  "Call someone you have not talked to in a while.",
+
+  "Check in with your battle buddy.",
+
+  "Ask someone: “How are you really doing?”",
+
+  "Tell someone you appreciate them.",
+
+  "Thank someone who has supported you.",
+
+  "Introduce yourself to someone you do not know.",
+
+  "Invite someone to lunch or a break.",
+
+  "Send someone an encouraging message.",
+
+  "Ask a teammate how you can support them.",
+
+  "Reconnect with someone from your past.",
+
+  "Tell someone: “You matter to me.”",
+
+  "Take a moment to listen without trying to fix anything.",
+
+  "Ask someone what they are looking forward to.",
+
+  "Check on someone who may be having a hard week.",
+
+  "Reach out to someone who has been quiet lately."
+
+];
+
+
+/* =========================================
+   GAME VARIABLES
+========================================= */
+
+let me = null;
+
+let game = null;
+
+let challengeDone = false;
+
+let selectedFeeling = null;
+
+let connectionCount =
+  Number(localStorage.getItem("connect4Connections")) || 0;
+
+let botTeam = null;
+
+let difficulty = "medium";
+
+
+/* =========================================
+   FEELING CHECK-IN
+========================================= */
+
+function selectFeeling(button, feeling){
+
+  document
+    .querySelectorAll(".feeling")
+    .forEach(item => {
+      item.classList.remove("selected");
+    });
+
+  button.classList.add("selected");
+
+  selectedFeeling = feeling;
+
+  const message =
+    document.getElementById("checkinMessage");
+
+  const messages = {
+
+    good:
+      "That's great. Keep that positive energy going and share it with someone else.",
+
+    okay:
+      "That's okay. Sometimes checking in is all it takes to start a conversation.",
+
+    rough:
+      "Thank you for being honest. You don't have to carry everything by yourself. Connection matters.",
+
+    stressed:
+      "Take a breath. You don't have to figure everything out alone. Consider checking in with someone you trust.",
+
+    talk:
+      "You're not alone. Consider reaching out to someone you trust or a leader, battle buddy, friend, or family member."
+  };
+
+  message.textContent =
+    messages[feeling];
+
+  message.classList.remove("hidden");
+
+  document
+    .getElementById("continueButton")
+    .disabled = false;
 }
-function move(col){
- if(!game||game.winner||game.turn!==me.team||!challengeDone)return;
- let r=-1;for(let i=5;i>=0;i--)if(!game.grid[i][col]){r=i;break} if(r<0)return;
- game.grid[r][col]=me.team; challengeDone=false;
- if(win(r,col,me.team))game.winner=me.team; else game.turn=me.team==="teal"?"purple":"teal";
- broadcast({type:"state",game});
- if(game.winner)document.getElementById("result").textContent=(game.winner===me.team?"YOU WON! ":"GAME OVER — ")+game.winner.toUpperCase()+" TEAM CONNECTED 4!";
- render();
+
+
+/* =========================================
+   MOVE FROM CHECK-IN TO GAME SETUP
+========================================= */
+
+function continueToGame(){
+
+  if(!selectedFeeling){
+    return;
+  }
+
+  document
+    .getElementById("checkin")
+    .classList.add("hidden");
+
+  document
+    .getElementById("setup")
+    .classList.remove("hidden");
+
 }
-function win(r,c,p){const dirs=[[1,0],[0,1],[1,1],[1,-1]];for(const[dR,dC]of dirs){let n=1;for(let s of[-1,1]){let R=r+s*dR,C=c+s*dC;while(R>=0&&R<6&&C>=0&&C<7&&game.grid[R][C]===p){n++;R+=s*dR;C+=s*dC}}if(n>=4)return true}return false}
+
+
+/* =========================================
+   RANDOM CHALLENGE
+========================================= */
+
+function pickChallenge(){
+
+  return challenges[
+    Math.floor(
+      Math.random() * challenges.length
+    )
+  ];
+
+}
+
+
+/* =========================================
+   NEW CHALLENGE
+========================================= */
+
+function newChallenge(){
+
+  document
+    .getElementById("challenge")
+    .textContent =
+      pickChallenge();
+
+  challengeDone = false;
+
+  const button =
+    document.getElementById("done");
+
+  button.disabled = true;
+
+}
+
+
+/* =========================================
+   COMPLETE CONNECTION CHALLENGE
+========================================= */
+
+function completeChallenge(){
+
+  if(
+    !game ||
+    game.winner ||
+    game.turn !== me.team
+  ){
+    return;
+  }
+
+  challengeDone = true;
+
+  incrementConnectionCounter();
+
+  const button =
+    document.getElementById("done");
+
+  button.disabled = true;
+
+  document
+    .getElementById("challenge")
+    .textContent =
+      "Connection made! Now make your move.";
+
+  render();
+
+}
+
+
+/* =========================================
+   CONNECTION COUNTER
+========================================= */
+
+function incrementConnectionCounter(){
+
+  connectionCount++;
+
+  localStorage.setItem(
+    "connect4Connections",
+    connectionCount
+  );
+
+  updateCounter();
+
+}
+
+
+function updateCounter(){
+
+  document
+    .getElementById("counter")
+    .textContent =
+      connectionCount;
+
+}
+
+
+/* =========================================
+   START GAME
+========================================= */
 
 function startComputerGame(){
- const name=document.getElementById("name").value.trim()||"Player";
- me={name,team:document.getElementById("team").value};
- window.botTeam=me.team==="teal"?"purple":"teal";
- window.difficulty=document.getElementById("difficulty").value;
- document.getElementById("setup").classList.add("hidden");
- document.getElementById("game").classList.remove("hidden");
- document.getElementById("end").classList.add("hidden");
- document.getElementById("p1").textContent=(me.team==="teal"?"🩵 ":"💜 ")+name;
- document.getElementById("p2").textContent=(window.botTeam==="teal"?"🩵 ":"💜 ")+"Connection Bot";
- game={grid:Array.from({length:6},()=>Array(7).fill(null)),turn:me.team,winner:null};
- newChallenge(); render();
+
+  const nameInput =
+    document.getElementById("name");
+
+  const name =
+    nameInput.value.trim() || "Player";
+
+  const team =
+    document.getElementById("team").value;
+
+  difficulty =
+    document.getElementById("difficulty").value;
+
+  me = {
+    name:name,
+    team:team
+  };
+
+  botTeam =
+    team === "teal"
+      ? "purple"
+      : "teal";
+
+
+  document
+    .getElementById("setup")
+    .classList.add("hidden");
+
+  document
+    .getElementById("game")
+    .classList.remove("hidden");
+
+  document
+    .getElementById("end")
+    .classList.add("hidden");
+
+
+  document
+    .getElementById("p1")
+    .textContent =
+      (team === "teal" ? "🩵 " : "💜 ")
+      + name;
+
+
+  document
+    .getElementById("p2")
+    .textContent =
+      (botTeam === "teal"
+        ? "🩵 "
+        : "💜 ")
+      + "Connection Bot";
+
+
+  game = {
+
+    grid:
+      Array.from(
+        {length:6},
+        () => Array(7).fill(null)
+      ),
+
+    turn:team,
+
+    winner:null,
+
+    draw:false
+
+  };
+
+
+  newChallenge();
+
+  render();
+
 }
+
+
+/* =========================================
+   RENDER BOARD
+========================================= */
+
 function render(){
- const b=document.getElementById("board");b.innerHTML="";
- game.grid.flat().forEach((v,i)=>{let c=document.createElement("div");c.className="cell "+(v||"");c.onclick=()=>move(i%7);b.appendChild(c)});
- document.getElementById("turn").textContent=game.winner?("Winner: "+game.winner.toUpperCase()):(game.turn===me.team?"YOUR TURN":"BOT'S TURN");
- document.getElementById("done").disabled=game.turn!==me.team||!challengeDone||!!game.winner;
+
+  if(!game){
+    return;
+  }
+
+  const board =
+    document.getElementById("board");
+
+  board.innerHTML = "";
+
+
+  game.grid.forEach(
+    (row,rowIndex) => {
+
+      row.forEach(
+        (value,colIndex) => {
+
+          const cell =
+            document.createElement("div");
+
+          cell.className =
+            "cell " + (value || "");
+
+          cell.setAttribute(
+            "aria-label",
+            "Column " + (colIndex + 1)
+          );
+
+          cell.onclick =
+            () => playerMove(colIndex);
+
+          board.appendChild(cell);
+
+        }
+      );
+
+    }
+  );
+
+
+  const turn =
+    document.getElementById("turn");
+
+
+  if(game.winner){
+
+    turn.textContent =
+      game.winner === me.team
+        ? "🎉 YOU WON!"
+        : "🤖 CONNECTION BOT WON!";
+
+  }
+
+  else if(game.draw){
+
+    turn.textContent =
+      "🤝 IT'S A DRAW!";
+
+  }
+
+  else if(game.turn === me.team){
+
+    turn.textContent =
+      "YOUR TURN";
+
+  }
+
+  else{
+
+    turn.textContent =
+      "BOT'S TURN";
+
+  }
+
+
+  const done =
+    document.getElementById("done");
+
+
+  done.disabled =
+    game.turn !== me.team ||
+    !challengeDone ||
+    !!game.winner ||
+    game.draw;
+
 }
-function completeChallenge(){
- if(game.turn!==me.team||game.winner)return;
- challengeDone=true;document.getElementById("done").disabled=true;
- document.getElementById("challenge").textContent="Connection made! Now make your move.";
+
+
+/* =========================================
+   PLAYER MOVE
+========================================= */
+
+function playerMove(column){
+
+  if(!game){
+    return;
+  }
+
+  if(game.winner || game.draw){
+    return;
+  }
+
+  if(game.turn !== me.team){
+    return;
+  }
+
+  if(!challengeDone){
+    return;
+  }
+
+
+  const dropped =
+    dropPiece(
+      column,
+      me.team
+    );
+
+
+  if(!dropped){
+    return;
+  }
+
+
+  challengeDone = false;
+
+
+  if(game.winner){
+
+    finishGame();
+
+    return;
+
+  }
+
+
+  if(isBoardFull()){
+
+    game.draw = true;
+
+    finishGame();
+
+    return;
+
+  }
+
+
+  game.turn = botTeam;
+
+  render();
+
+
+  setTimeout(
+    botMove,
+    500
+  );
+
 }
-function move(col){
- if(!game||game.winner||game.turn!==me.team||!challengeDone)return;
- if(!dropPiece(col,me.team))return;
- challengeDone=false;
- if(game.winner){finishGame();return}
- game.turn=window.botTeam;render();setTimeout(botMove,450);
+
+
+/* =========================================
+   DROP PIECE
+========================================= */
+
+function dropPiece(column, player){
+
+  let row = -1;
+
+
+  for(
+    let r = 5;
+    r >= 0;
+    r--
+  ){
+
+    if(
+      game.grid[r][column] === null
+    ){
+
+      row = r;
+
+      break;
+
+    }
+
+  }
+
+
+  if(row === -1){
+
+    return false;
+
+  }
+
+
+  game.grid[row][column] =
+    player;
+
+
+  if(
+    checkWin(
+      game.grid,
+      row,
+      column,
+      player
+    )
+  ){
+
+    game.winner =
+      player;
+
+  }
+
+
+  return true;
+
 }
-function dropPiece(col,p){
- let r=-1;for(let i=5;i>=0;i--)if(!game.grid[i][col]){r=i;break}
- if(r<0)return false;
- game.grid[r][col]=p;
- if(winOn(game.grid,r,col,p))game.winner=p;
- return true;
-}
+
+
+/* =========================================
+   BOT MOVE
+========================================= */
+
 function botMove(){
- if(game.winner)return;
- const col=chooseBotColumn();dropPiece(col,window.botTeam);
- if(game.winner){finishGame();return}
- game.turn=me.team;newChallenge();render();
+
+  if(
+    !game ||
+    game.winner ||
+    game.draw
+  ){
+
+    return;
+
+  }
+
+
+  const column =
+    chooseBotColumn();
+
+
+  dropPiece(
+    column,
+    botTeam
+  );
+
+
+  if(game.winner){
+
+    finishGame();
+
+    return;
+
+  }
+
+
+  if(isBoardFull()){
+
+    game.draw = true;
+
+    finishGame();
+
+    return;
+
+  }
+
+
+  game.turn =
+    me.team;
+
+
+  newChallenge();
+
+  render();
+
 }
-function availableCols(){return Array.from({length:7},(_,c)=>c).filter(c=>game.grid[0][c]===null)}
+
+
+/* =========================================
+   AVAILABLE COLUMNS
+========================================= */
+
+function availableColumns(){
+
+  return Array
+    .from(
+      {length:7},
+      (_,column) => column
+    )
+    .filter(
+      column =>
+        game.grid[0][column] === null
+    );
+
+}
+
+
+/* =========================================
+   BOT AI
+========================================= */
+
 function chooseBotColumn(){
- const cols=availableCols();if(!cols.length)return 0;
- let w=findWinningMove(window.botTeam);if(w!==null)return w;
- if(window.difficulty!=="easy"){let b=findWinningMove(me.team);if(b!==null)return b}
- if(window.difficulty==="hard"){for(const c of [3,2,4,1,5,0,6])if(cols.includes(c))return c}
- return cols[Math.floor(Math.random()*cols.length)];
+
+  const columns =
+    availableColumns();
+
+
+  if(!columns.length){
+
+    return 0;
+
+  }
+
+
+  /* HARD/MEDIUM:
+     Try to win */
+
+  const winningMove =
+    findWinningMove(botTeam);
+
+
+  if(winningMove !== null){
+
+    return winningMove;
+
+  }
+
+
+  /* MEDIUM/HARD:
+     Block player */
+
+  if(
+    difficulty !== "easy"
+  ){
+
+    const blockingMove =
+      findWinningMove(me.team);
+
+
+    if(
+      blockingMove !== null
+    ){
+
+      return blockingMove;
+
+    }
+
+  }
+
+
+  /* HARD:
+     Prefer center */
+
+  if(
+    difficulty === "hard"
+  ){
+
+    const preferred =
+      [3,2,4,1,5,0,6];
+
+
+    for(
+      const column of preferred
+    ){
+
+      if(
+        columns.includes(column)
+      ){
+
+        return column;
+
+      }
+
+    }
+
+  }
+
+
+  /* EASY:
+     Random */
+
+  return columns[
+    Math.floor(
+      Math.random() * columns.length
+    )
+  ];
+
 }
-function findWinningMove(p){
- for(const c of availableCols()){
-   let g=game.grid.map(r=>r.slice()),r=-1;
-   for(let i=5;i>=0;i--)if(!g[i][c]){r=i;break}
-   g[r][c]=p;if(winOn(g,r,c,p))return c;
- }
- return null;
+
+
+/* =========================================
+   FIND WINNING MOVE
+========================================= */
+
+function findWinningMove(player){
+
+  const columns =
+    availableColumns();
+
+
+  for(
+    const column of columns
+  ){
+
+    const testGrid =
+      game.grid.map(
+        row => row.slice()
+      );
+
+
+    let row = -1;
+
+
+    for(
+      let r = 5;
+      r >= 0;
+      r--
+    ){
+
+      if(
+        testGrid[r][column] === null
+      ){
+
+        row = r;
+
+        break;
+
+      }
+
+    }
+
+
+    if(row === -1){
+      continue;
+    }
+
+
+    testGrid[row][column] =
+      player;
+
+
+    if(
+      checkWin(
+        testGrid,
+        row,
+        column,
+        player
+      )
+    ){
+
+      return column;
+
+    }
+
+  }
+
+
+  return null;
+
 }
-function winOn(g,r,c,p){
- for(const[dR,dC]of[[1,0],[0,1],[1,1],[1,-1]]){
-   let n=1;
-   for(const s of[-1,1]){
-     let R=r+s*dR,C=c+s*dC;
-     while(R>=0&&R<6&&C>=0&&C<7&&g[R][C]===p){n++;R+=s*dR;C+=s*dC}
-   }
-   if(n>=4)return true;
- }
- return false;
+
+
+/* =========================================
+   CHECK WIN
+========================================= */
+
+function checkWin(
+  grid,
+  row,
+  column,
+  player
+){
+
+  const directions = [
+
+    [1,0],
+
+    [0,1],
+
+    [1,1],
+
+    [1,-1]
+
+  ];
+
+
+  for(
+    const [dr,dc] of directions
+  ){
+
+    let count = 1;
+
+
+    for(
+      const direction of [-1,1]
+    ){
+
+      let r =
+        row +
+        direction * dr;
+
+      let c =
+        column +
+        direction * dc;
+
+
+      while(
+        r >= 0 &&
+        r < 6 &&
+        c >= 0 &&
+        c < 7 &&
+        grid[r][c] === player
+      ){
+
+        count++;
+
+        r +=
+          direction * dr;
+
+        c +=
+          direction * dc;
+
+      }
+
+    }
+
+
+    if(count >= 4){
+
+      return true;
+
+    }
+
+  }
+
+
+  return false;
+
 }
+
+
+/* =========================================
+   CHECK FOR DRAW
+========================================= */
+
+function isBoardFull(){
+
+  return game.grid[0]
+    .every(
+      cell => cell !== null
+    );
+
+}
+
+
+/* =========================================
+   FINISH GAME
+========================================= */
+
 function finishGame(){
- render();document.getElementById("end").classList.remove("hidden");
- document.getElementById("result").textContent=game.winner===me.team?"🎉 YOU CONNECTED 4!":"🤖 THE CONNECTION BOT CONNECTED 4!";
+
+  render();
+
+
+  const end =
+    document.getElementById("end");
+
+  const result =
+    document.getElementById("result");
+
+
+  end.classList.remove("hidden");
+
+
+  if(game.winner){
+
+    if(
+      game.winner === me.team
+    ){
+
+      result.textContent =
+        "🎉 YOU CONNECTED 4!";
+
+    }
+
+    else{
+
+      result.textContent =
+        "🤖 THE CONNECTION BOT CONNECTED 4!";
+
+    }
+
+  }
+
+  else if(game.draw){
+
+    result.textContent =
+      "🤝 GREAT GAME — IT'S A DRAW!";
+
+  }
+
+
+  end.scrollIntoView({
+    behavior:"smooth"
+  });
+
 }
-function newChallenge(){
- document.getElementById("challenge").textContent=pick();
- challengeDone=false;
- const btn=document.getElementById("done");if(btn)btn.disabled=true;
+
+
+/* =========================================
+   PLAY AGAIN
+========================================= */
+
+function playAgain(){
+
+  game = null;
+
+  challengeDone = false;
+
+  selectedFeeling = null;
+
+
+  document
+    .getElementById("end")
+    .classList.add("hidden");
+
+  document
+    .getElementById("game")
+    .classList.add("hidden");
+
+  document
+    .getElementById("setup")
+    .classList.add("hidden");
+
+  document
+    .getElementById("checkin")
+    .classList.remove("hidden");
+
+
+  document
+    .querySelectorAll(".feeling")
+    .forEach(
+      button =>
+        button.classList.remove("selected")
+    );
+
+
+  document
+    .getElementById("checkinMessage")
+    .classList.add("hidden");
+
+
+  document
+    .getElementById("continueButton")
+    .disabled = true;
+
 }
+
+
+/* =========================================
+   INITIALIZE COUNTER
+========================================= */
+
+updateCounter();
+
 </script>
+
 </body>
 </html>
