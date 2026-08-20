@@ -1,10 +1,16 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Connect 4 Connection Challenge</title>
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
+
+<title>DCNG Connect 4 Connection Challenge</title>
 
 <meta
   name="description"
@@ -12,339 +18,982 @@
 />
 
 <style>
-:root{
-  --teal:#10b8b0;
-  --purple:#7041a6;
-  --dark-purple:#4e2d78;
-  --ink:#101827;
-  --bg:#f5f7fb;
-  --white:#ffffff;
-  --light-teal:#effcfb;
-  --light-purple:#f4effa;
+
+:root {
+  --teal: #10b8b0;
+  --purple: #7041a6;
+  --dark-purple: #4e2d78;
+  --light-teal: #effcfb;
+  --light-purple: #f5effa;
+  --white: #ffffff;
+  --dark: #101827;
 }
 
-*{
-  box-sizing:border-box;
+* {
+  box-sizing: border-box;
 }
 
-body{
-  margin:0;
-  font-family:Arial,Helvetica,sans-serif;
-  background:linear-gradient(135deg,#f8fbfb,#f3eef9);
-  color:var(--ink);
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(
+    135deg,
+    #f8fbfb,
+    #f3eef9
+  );
+  color: var(--dark);
 }
 
-header{
-  background:linear-gradient(100deg,var(--teal),var(--purple));
-  color:white;
-  padding:28px 18px;
-  text-align:center;
+
+/* HEADER */
+
+header {
+  background: linear-gradient(
+    100deg,
+    var(--teal),
+    var(--purple)
+  );
+
+  color: white;
+  text-align: center;
+  padding: 30px 18px;
 }
 
-header h1{
-  font-size:clamp(30px,6vw,58px);
-  margin:0;
-  font-weight:900;
-  letter-spacing:-2px;
+header h1 {
+  margin: 0;
+  font-size: clamp(
+    38px,
+    8vw,
+    64px
+  );
+
+  font-weight: 900;
+  letter-spacing: -2px;
 }
 
-header p{
-  margin:8px 0 0;
-  font-size:18px;
-  font-weight:700;
+header p {
+  margin: 8px 0 0;
+  font-size: 17px;
+  font-weight: bold;
 }
 
-main{
-  max-width:1050px;
-  margin:auto;
-  padding:20px;
+
+/* MAIN */
+
+main {
+  max-width: 1000px;
+  margin: auto;
+  padding: 20px;
 }
 
-.card{
-  background:var(--white);
-  border-radius:22px;
-  padding:22px;
-  margin:16px 0;
-  box-shadow:0 10px 35px #00000012;
+
+/* CARDS */
+
+.card {
+  background: var(--white);
+  border-radius: 22px;
+  padding: 25px;
+  margin: 20px 0;
+
+  box-shadow:
+    0 10px 35px #00000012;
 }
 
-h2{
-  margin-top:0;
+
+/* TEXT */
+
+.center {
+  text-align: center;
 }
 
-.row{
-  display:flex;
-  gap:12px;
-  flex-wrap:wrap;
+.small {
+  font-size: 13px;
+  color: #5b6475;
 }
 
-.row>*{
-  flex:1;
-  min-width:200px;
+
+/* BUTTONS */
+
+button {
+  width: 100%;
+  padding: 15px;
+
+  border: none;
+  border-radius: 12px;
+
+  font-size: 16px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  background: var(--purple);
+  color: white;
+
+  transition: 0.2s;
+}
+
+button:hover {
+  transform: translateY(-2px);
+}
+
+button.teal {
+  background: var(--teal);
+}
+
+
+/* HIDDEN */
+
+.hidden {
+  display: none !important;
+}
+
+
+/* FEELINGS */
+
+.feeling-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, 1fr);
+
+  gap: 12px;
+
+  margin-top: 20px;
+}
+
+.feeling {
+  background: white;
+  color: var(--dark);
+
+  border: 2px solid #e0e3ea;
+
+  min-height: 120px;
+}
+
+.feeling:hover {
+  border-color: var(--teal);
+
+  background: var(--light-teal);
+}
+
+.feeling.selected {
+  border-color: var(--teal);
+
+  background: var(--light-teal);
+
+  box-shadow:
+    0 0 0 4px #10b8b033;
+}
+
+.emoji {
+  display: block;
+
+  font-size: 36px;
+
+  margin-bottom: 8px;
+}
+
+
+/* MESSAGE */
+
+.message {
+  background: var(--light-purple);
+
+  border-radius: 16px;
+
+  padding: 20px;
+
+  margin-top: 20px;
+
+  text-align: center;
+
+  font-size: 18px;
+
+  font-weight: bold;
+
+  line-height: 1.5;
+}
+
+
+/* SETUP */
+
+.row {
+  display: flex;
+
+  gap: 12px;
+
+  flex-wrap: wrap;
+}
+
+.row > div {
+  flex: 1;
+
+  min-width: 200px;
+}
+
+label {
+  display: block;
+
+  margin-bottom: 6px;
+
+  font-weight: bold;
 }
 
 input,
-button,
-select{
-  width:100%;
-  padding:14px;
-  border-radius:12px;
-  border:1px solid #d8dce6;
-  font-size:16px;
+select {
+  width: 100%;
+
+  padding: 14px;
+
+  border-radius: 12px;
+
+  border:
+    1px solid #d8dce6;
+
+  font-size: 16px;
 }
 
-button{
-  border:0;
-  background:var(--purple);
-  color:white;
-  font-weight:800;
-  cursor:pointer;
-  transition:.2s;
+
+/* GAME */
+
+.players {
+  display: flex;
+
+  justify-content:
+    space-between;
+
+  gap: 10px;
+
+  font-weight: 900;
+
+  font-size: 18px;
 }
 
-button:hover{
-  transform:translateY(-1px);
-  filter:brightness(1.05);
+.turn {
+  text-align: center;
+
+  font-size: 22px;
+
+  font-weight: 900;
+
+  margin: 18px 0;
 }
 
-button.teal{
-  background:var(--teal);
+
+/* MOTIVATIONAL MESSAGE */
+
+.motivation {
+  background: var(--light-teal);
+
+  border:
+    3px solid var(--teal);
+
+  border-radius: 18px;
+
+  padding: 18px;
+
+  text-align: center;
+
+  font-size: 19px;
+
+  font-weight: bold;
+
+  line-height: 1.4;
+
+  margin-bottom: 20px;
 }
 
-button:disabled{
-  opacity:.45;
-  cursor:not-allowed;
-  transform:none;
+
+/* BOARD */
+
+.board {
+  width: min(
+    100%,
+    600px
+  );
+
+  margin: auto;
+
+  background: #27335a;
+
+  padding: 10px;
+
+  border-radius: 20px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(7, 1fr);
+
+  gap: 8px;
 }
 
-.hidden{
-  display:none!important;
+
+/* CELLS */
+
+.cell {
+  aspect-ratio: 1 / 1;
+
+  background: #e9edf4;
+
+  border-radius: 50%;
+
+  cursor: pointer;
+
+  box-shadow:
+    inset 0 4px 7px #0002;
+
+  transition: 0.15s;
 }
 
-.center{
-  text-align:center;
+.cell:hover {
+  transform: scale(0.93);
 }
 
-.small{
-  font-size:13px;
-  color:#586174;
+.cell.teal {
+  background: var(--teal);
 }
 
-/* FEELING CHECK-IN */
-
-.feeling-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:12px;
-  margin-top:20px;
+.cell.purple {
+  background: var(--purple);
 }
 
-.feeling{
-  background:white;
-  color:var(--ink);
-  border:2px solid #e2e5ed;
-  padding:18px;
-  font-size:17px;
+
+/* GAME OVER */
+
+.game-over {
+  text-align: center;
+
+  font-size: 30px;
+
+  font-weight: 900;
+
+  margin-bottom: 15px;
 }
 
-.feeling:hover{
-  border-color:var(--teal);
-  background:var(--light-teal);
-}
-
-.feeling.selected{
-  border-color:var(--teal);
-  background:var(--light-teal);
-  box-shadow:0 0 0 3px #10b8b033;
-}
-
-.feeling-emoji{
-  display:block;
-  font-size:32px;
-  margin-bottom:6px;
-}
-
-.checkin-message{
-  margin-top:20px;
-  padding:18px;
-  background:var(--light-purple);
-  border-radius:16px;
-  font-weight:700;
-}
 
 /* CHALLENGE */
 
-.challenge{
-  border:3px solid var(--teal);
-  background:var(--light-teal);
-  border-radius:18px;
-  padding:18px;
-  text-align:center;
-  font-size:20px;
-  font-weight:800;
+.final-challenge {
+  background:
+    linear-gradient(
+      135deg,
+      var(--light-teal),
+      var(--light-purple)
+    );
+
+  border-radius: 20px;
+
+  padding: 25px;
+
+  margin-top: 20px;
+
+  text-align: center;
 }
 
-<!-- GAME -->
-<div class="card hidden" id="game">
+.final-challenge h3 {
+  margin-top: 0;
 
-  <div class="names">
-    <span id="p1">🩵 Player</span>
-    <span id="p2">💜 Connection Bot</span>
-  </div>
+  font-size: 24px;
 
-  <div
-    class="turn-message"
-    id="turn"
-  >
-    YOUR TURN
-  </div>
+  color: var(--purple);
+}
 
-  <div
-    class="challenge"
-    id="challenge"
-  >
-    Your presence matters. Keep going. 💜
-  </div>
+.challenge-text {
+  font-size: 21px;
 
-  <div
-    class="board"
-    id="board"
-  ></div>
+  font-weight: 900;
 
-</div>
+  line-height: 1.5;
+}
 
-<!-- ============================= -->
-<!-- GAME END -->
-<!-- ============================= -->
 
-<div
-  class="card hidden"
-  id="end"
+/* COUNTER */
+
+.counter {
+  text-align: center;
+
+  font-size: 50px;
+
+  font-weight: 900;
+
+  color: var(--purple);
+}
+
+
+/* MOBILE */
+
+@media(max-width: 600px) {
+
+  main {
+    padding: 12px;
+  }
+
+  .card {
+    padding: 18px;
+  }
+
+  .feeling-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .players {
+    font-size: 14px;
+  }
+
+  .board {
+    gap: 5px;
+
+    padding: 7px;
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- HEADER -->
+
+<header>
+
+<h1>
+CONNECT <span style="color:#eaffff">4</span>
+</h1>
+
+<p>
+CONNECTION CHALLENGE
+<br>
+One Move. One Connection. One Life Impacted.
+</p>
+
+</header>
+
+
+<main>
+
+
+<!-- ================================= -->
+<!-- FEELING CHECK-IN -->
+<!-- ================================= -->
+
+<section
+  class="card"
+  id="checkin"
 >
 
-  <h2
-    class="center"
-    id="result"
-  ></h2>
+<div class="center">
 
-  <p class="center">
-    Keep the connection going.
-    Reach out. Check in. Be there.
-  </p>
+<h2>
+How are you feeling today?
+</h2>
 
-  <div class="center">
-
-    <button
-      class="teal"
-      onclick="playAgain()"
-    >
-      PLAY AGAIN
-    </button>
-
-  </div>
+<p>
+Take a moment to check in with yourself before you play.
+</p>
 
 </div>
 
 
-<!-- ============================= -->
-<!-- CONNECTION COUNTER -->
-<!-- ============================= -->
+<div class="feeling-grid">
 
-<div class="card">
 
-  <h2 class="center">
-    Connection Counter
-  </h2>
+<button
+  class="feeling"
+  onclick="chooseFeeling(this, 'good')"
+>
 
-  <div
-    class="score connection-count"
-    id="counter"
-  >
-    0
-  </div>
+<span class="emoji">
+😊
+</span>
 
-  <p class="center">
-    connections made through this challenge
-  </p>
+I'm doing good
 
-  <p class="small center">
-    Every connection starts with one small step.
-  </p>
+</button>
+
+
+<button
+  class="feeling"
+  onclick="chooseFeeling(this, 'okay')"
+>
+
+<span class="emoji">
+😐
+</span>
+
+I'm okay
+
+</button>
+
+
+<button
+  class="feeling"
+  onclick="chooseFeeling(this, 'rough')"
+>
+
+<span class="emoji">
+😔
+</span>
+
+I'm having a rough day
+
+</button>
+
+
+<button
+  class="feeling"
+  onclick="chooseFeeling(this, 'stressed')"
+>
+
+<span class="emoji">
+😣
+</span>
+
+I'm stressed
+
+</button>
+
+
+<button
+  class="feeling"
+  onclick="chooseFeeling(this, 'talk')"
+>
+
+<span class="emoji">
+🫶
+</span>
+
+I just need someone to talk to
+
+</button>
+
 
 </div>
+
+
+<div
+  id="feelingMessage"
+  class="message hidden"
+></div>
+
+
+<div style="margin-top:20px">
+
+<button
+  id="continueBtn"
+  class="teal"
+  onclick="continueToSetup()"
+  disabled
+>
+
+CONTINUE
+
+</button>
+
+</div>
+
+</section>
+
+
+
+<!-- ================================= -->
+<!-- GAME SETUP -->
+<!-- ================================= -->
+
+<section
+  class="card hidden"
+  id="setup"
+>
+
+<h2>
+Ready to Play?
+</h2>
+
+<p>
+Play Connect 4 against the Connection Bot.
+</p>
+
+<p>
+After the game, you'll receive a Connection Challenge to take with you.
+</p>
+
+
+<div class="row">
+
+
+<div>
+
+<label>
+Your Name
+</label>
+
+<input
+  id="playerName"
+  placeholder="Enter your name"
+  maxlength="30"
+>
+
+</div>
+
+
+<div>
+
+<label>
+Your Team
+</label>
+
+<select id="team">
+
+<option value="teal">
+🩵 Teal Team
+</option>
+
+<option value="purple">
+💜 Purple Team
+</option>
+
+</select>
+
+</div>
+
+
+<div>
+
+<label>
+Difficulty
+</label>
+
+<select id="difficulty">
+
+<option value="easy">
+🟢 Easy
+</option>
+
+<option value="medium" selected>
+🟡 Medium
+</option>
+
+<option value="hard">
+🔴 Hard
+</option>
+
+</select>
+
+</div>
+
+
+</div>
+
+
+<div style="margin-top:20px">
+
+<button
+  class="teal"
+  onclick="startGame()"
+>
+
+PLAY CONNECT 4
+
+</button>
+
+</div>
+
+</section>
+
+
+
+<!-- ================================= -->
+<!-- GAME -->
+<!-- ================================= -->
+
+<section
+  class="card hidden"
+  id="game"
+>
+
+
+<div class="players">
+
+<span id="playerLabel">
+🩵 Player
+</span>
+
+<span id="botLabel">
+💜 Connection Bot
+</span>
+
+</div>
+
+
+<div
+  id="turn"
+  class="turn"
+>
+
+YOUR TURN
+
+</div>
+
+
+<div
+  id="motivation"
+  class="motivation"
+>
+
+Your presence matters.
+Keep going. 💜
+
+</div>
+
+
+<div
+  id="board"
+  class="board"
+></div>
+
+
+</section>
+
+
+
+<!-- ================================= -->
+<!-- GAME OVER -->
+<!-- ================================= -->
+
+<section
+  class="card hidden"
+  id="gameOver"
+>
+
+
+<div
+  id="gameResult"
+  class="game-over"
+>
+</div>
+
+
+<div
+  id="finalMessage"
+  class="message"
+>
+</div>
+
+
+<div class="final-challenge">
+
+<h3>
+Your Connection Challenge
+</h3>
+
+<p>
+Connection starts with one small step.
+</p>
+
+<div
+  id="challenge"
+  class="challenge-text"
+>
+</div>
+
+</div>
+
+
+<div style="margin-top:20px">
+
+<button
+  class="teal"
+  onclick="restartGame()"
+>
+
+PLAY AGAIN
+
+</button>
+
+</div>
+
+</section>
+
+
+
+<!-- ================================= -->
+<!-- COUNTER -->
+<!-- ================================= -->
+
+<section class="card">
+
+<h2 class="center">
+Connection Counter
+</h2>
+
+<div
+  id="counter"
+  class="counter"
+>
+0
+</div>
+
+<p class="center">
+connections made through this challenge
+</p>
+
+<p class="small center">
+Every connection starts with one small step.
+</p>
+
+</section>
 
 
 </main>
 
 
+
 <script>
 
-const motivationalMessages = [
-  "Your presence matters. Keep going. 💜",
-  "One conversation can make a difference. Check in on someone today.",
-  "You never know who needs to hear from you. Reach out. 🩵",
-  "Connection can be a powerful form of support.",
-  "A simple 'How are you?' can open an important conversation.",
-  "You don't have to have all the answers. Sometimes being there is enough.",
-  "Keep checking in. Keep reaching out. Keep connecting.",
-  "Someone in your circle may need you more than you realize.",
-  "Small acts of connection can have a lasting impact.",
-  "You matter. Your teammates matter. Your connection matters."
+
+/* =========================================
+   DATA
+========================================= */
+
+
+const motivations = [
+
+"Your presence matters. Keep going. 💜",
+
+"One conversation can make a difference. Check in with someone today.",
+
+"You never know who needs to hear from you. Reach out. 🩵",
+
+"Connection can be a powerful form of support.",
+
+"A simple 'How are you?' can open an important conversation.",
+
+"You don't have to have all the answers. Sometimes being there is enough.",
+
+"Keep checking in. Keep reaching out. Keep connecting.",
+
+"Someone in your circle may need you more than you realize.",
+
+"Small acts of connection can have a lasting impact.",
+
+"You matter. Your teammates matter. Your connection matters.",
+
+"Be the person who checks in.",
+
+"Sometimes the most important thing you can do is simply listen."
+
 ];
 
-const endMessages = [
-  "Suicide prevention starts with connection. Check in. Listen. Be there.",
-  "You don't have to be a professional to make a difference. Sometimes being present matters most.",
-  "If someone is struggling, don't be afraid to ask how they're really doing.",
-  "Connection saves lives. Keep reaching out and keep checking in.",
-  "Your next conversation could be the one someone remembers.",
-  "Be the person who checks in. Be the person who listens. Be the connection."
+
+const finalMessages = [
+
+"Suicide prevention starts with connection. Check in. Listen. Be there.",
+
+"You don't have to be a professional to make a difference. Sometimes being present matters most.",
+
+"If someone is struggling, don't be afraid to ask how they're really doing.",
+
+"Connection saves lives. Keep reaching out and keep checking in.",
+
+"Your next conversation could be the one someone remembers.",
+
+"Be the person who checks in. Be the person who listens. Be the connection."
+
 ];
+
 
 const challenges = [
-  "Text someone you miss.",
-  "Call someone you have not talked to in a while.",
-  "Check in with your battle buddy.",
-  "Ask someone: “How are you really doing?”",
-  "Tell someone you appreciate them.",
-  "Thank someone who has supported you.",
-  "Introduce yourself to someone you do not know.",
-  "Invite someone to lunch or a break.",
-  "Send someone an encouraging message.",
-  "Ask a teammate how you can support them.",
-  "Reconnect with someone from your past.",
-  "Tell someone: “You matter to me.”",
-  "Take a moment to listen without trying to fix anything.",
-  "Ask someone what they are looking forward to.",
-  "Check on someone who may be having a hard week.",
-  "Reach out to someone who has been quiet lately."
+
+"Text someone you miss.",
+
+"Call someone you have not talked to in a while.",
+
+"Check in with your battle buddy.",
+
+"Ask someone: “How are you really doing?”",
+
+"Tell someone you appreciate them.",
+
+"Thank someone who has supported you.",
+
+"Introduce yourself to someone you do not know.",
+
+"Invite someone to lunch or a break.",
+
+"Send someone an encouraging message.",
+
+"Ask a teammate how you can support them.",
+
+"Reconnect with someone from your past.",
+
+"Tell someone: “You matter to me.”",
+
+"Take a moment to listen without trying to fix anything.",
+
+"Ask someone what they are looking forward to.",
+
+"Check on someone who may be having a hard week.",
+
+"Reach out to someone who has been quiet lately."
+
 ];
 
-let me = null;
-let game = null;
-let selectedFeeling = null;
-let connectionCount =
-  Number(localStorage.getItem("connect4Connections")) || 0;
 
-let botTeam = null;
+/* =========================================
+   GAME VARIABLES
+========================================= */
+
+
+let player = null;
+
+let bot = null;
+
+let selectedFeeling = null;
+
+let game = null;
+
 let difficulty = "medium";
 
+let connections =
+  Number(
+    localStorage.getItem(
+      "dcngConnections"
+    )
+  ) || 0;
 
-/* =========================
+
+/* =========================================
    FEELING CHECK-IN
-========================= */
+========================================= */
 
-function selectFeeling(button, feeling) {
+
+function chooseFeeling(
+  button,
+  feeling
+) {
 
   document
     .querySelectorAll(".feeling")
-    .forEach(item => {
-      item.classList.remove("selected");
-    });
+    .forEach(
+      item =>
+        item.classList.remove(
+          "selected"
+        )
+    );
 
-  button.classList.add("selected");
 
-  selectedFeeling = feeling;
+  button.classList.add(
+    "selected"
+  );
+
+
+  selectedFeeling =
+    feeling;
+
 
   const messages = {
 
@@ -352,10 +1001,10 @@ function selectFeeling(button, feeling) {
       "That's great. Keep that positive energy going and share it with someone else.",
 
     okay:
-      "That's okay. Sometimes checking in is all it takes to start a conversation.",
+      "That's okay. Checking in with yourself is important.",
 
     rough:
-      "Thank you for being honest. You don't have to carry everything by yourself. Connection matters.",
+      "Thank you for being honest. You don't have to carry everything by yourself.",
 
     stressed:
       "Take a breath. You don't have to figure everything out alone.",
@@ -364,724 +1013,1061 @@ function selectFeeling(button, feeling) {
       "You're not alone. Consider reaching out to someone you trust."
   };
 
-  const message =
-    document.getElementById("checkinMessage");
 
-  message.textContent =
+  const box =
+    document.getElementById(
+      "feelingMessage"
+    );
+
+
+  box.textContent =
     messages[feeling];
 
-  message.classList.remove("hidden");
+
+  box.classList.remove(
+    "hidden"
+  );
+
 
   document.getElementById(
-    "continueButton"
+    "continueBtn"
   ).disabled = false;
+
 }
 
 
-/* =========================
+/* =========================================
    CONTINUE
-========================= */
+========================================= */
 
-function continueToGame() {
 
-  if (!selectedFeeling) return;
+function continueToSetup() {
+
+  if (!selectedFeeling) {
+    return;
+  }
+
 
   document
     .getElementById("checkin")
     .classList.add("hidden");
 
+
   document
     .getElementById("setup")
     .classList.remove("hidden");
+
 }
 
 
-/* =========================
+/* =========================================
    START GAME
-========================= */
+========================================= */
 
-function startComputerGame() {
+
+function startGame() {
 
   const name =
-    document.getElementById("name")
-      .value.trim() || "Player";
+    document
+      .getElementById(
+        "playerName"
+      )
+      .value
+      .trim()
+      || "Player";
 
-  me = {
-    name: name,
-    team:
-      document.getElementById("team").value
-  };
+
+  const team =
+    document.getElementById(
+      "team"
+    ).value;
+
 
   difficulty =
-    document.getElementById("difficulty").value;
+    document.getElementById(
+      "difficulty"
+    ).value;
 
-  botTeam =
-    me.team === "teal"
-      ? "purple"
-      : "teal";
+
+  player = {
+
+    name: name,
+
+    team: team
+
+  };
+
+
+  bot = {
+
+    team:
+      team === "teal"
+        ? "purple"
+        : "teal"
+
+  };
+
 
   game = {
 
-    grid:
+    board:
       Array.from(
         { length: 6 },
-        () => Array(7).fill(null)
+        () =>
+          Array(7).fill(null)
       ),
 
-    turn: me.team,
+    turn: "player",
 
     winner: null,
 
     draw: false
+
   };
+
 
   document
     .getElementById("setup")
     .classList.add("hidden");
+
 
   document
     .getElementById("game")
     .classList.remove("hidden");
 
+
   document
-    .getElementById("end")
+    .getElementById("gameOver")
     .classList.add("hidden");
 
+
   document
-    .getElementById("p1")
+    .getElementById(
+      "playerLabel"
+    )
     .textContent =
-      (me.team === "teal" ? "🩵 " : "💜 ")
+      (
+        team === "teal"
+          ? "🩵 "
+          : "💜 "
+      )
       + name;
 
+
   document
-    .getElementById("p2")
+    .getElementById(
+      "botLabel"
+    )
     .textContent =
-      (botTeam === "teal" ? "🩵 " : "💜 ")
+      (
+        bot.team === "teal"
+          ? "🩵 "
+          : "💜 "
+      )
       + "Connection Bot";
 
-  showMotivationalMessage();
 
-  render();
+  showMotivation();
+
+  renderBoard();
+
 }
 
 
-/* =========================
+/* =========================================
    RENDER BOARD
-========================= */
+========================================= */
 
-function render() {
 
-  if (!game) return;
+function renderBoard() {
 
-  const board =
-    document.getElementById("board");
+  const boardElement =
+    document.getElementById(
+      "board"
+    );
 
-  board.innerHTML = "";
 
-  game.grid.forEach(
-    (row, rowIndex) => {
+  boardElement.innerHTML = "";
 
-      row.forEach(
-        (value, colIndex) => {
 
-          const cell =
-            document.createElement("div");
+  for (
+    let row = 0;
+    row < 6;
+    row++
+  ) {
 
-          cell.className =
-            "cell " + (value || "");
+    for (
+      let col = 0;
+      col < 7;
+      col++
+    ) {
 
-          cell.onclick =
-            () => playerMove(colIndex);
+      const cell =
+        document.createElement(
+          "div"
+        );
 
-          board.appendChild(cell);
 
-        }
+      cell.className =
+        "cell";
+
+
+      const value =
+        game.board[row][col];
+
+
+      if (value) {
+
+        cell.classList.add(
+          value
+        );
+
+      }
+
+
+      cell.onclick =
+        function() {
+
+          playerMove(col);
+
+        };
+
+
+      boardElement.appendChild(
+        cell
       );
 
     }
-  );
 
+  }
+
+
+  updateTurn();
+
+}
+
+
+/* =========================================
+   TURN
+========================================= */
+
+
+function updateTurn() {
 
   const turn =
-    document.getElementById("turn");
+    document.getElementById(
+      "turn"
+    );
+
 
   if (game.winner) {
 
     turn.textContent =
-      game.winner === me.team
+      game.winner === player.team
         ? "🎉 YOU WON!"
         : "🤖 BOT WON!";
 
-  } else if (game.draw) {
+    return;
+
+  }
+
+
+  if (game.draw) {
 
     turn.textContent =
       "🤝 IT'S A DRAW!";
 
-  } else if (game.turn === me.team) {
-
-    turn.textContent =
-      "YOUR TURN";
-
-  } else {
-
-    turn.textContent =
-      "BOT'S TURN";
+    return;
 
   }
+
+
+  turn.textContent =
+    game.turn === "player"
+      ? "YOUR TURN"
+      : "BOT'S TURN";
+
 }
 
 
-/* =========================
+/* =========================================
    PLAYER MOVE
-========================= */
-
-function playerMove(column) {
-
-  if (!game) return;
-
-  if (game.winner || game.draw) return;
-
-  if (game.turn !== me.team) return;
-
-  const moved =
-    dropPiece(
-      column,
-      me.team
-    );
-
-  if (!moved) return;
-
-  render();
-
-  if (game.winner) {
-
-    setTimeout(
-      finishGame,
-      500
-    );
-
-    return;
-  }
-
-  if (isBoardFull()) {
-
-    game.draw = true;
-
-    setTimeout(
-      finishGame,
-      500
-    );
-
-    return;
-  }
-
-  game.turn = botTeam;
-
-  render();
-
-  setTimeout(
-    botMove,
-    700
-  );
-}
+========================================= */
 
 
-/* =========================
-   DROP PIECE
-========================= */
-
-function dropPiece(column, player) {
-
-  let row = -1;
-
-  for (
-    let r = 5;
-    r >= 0;
-    r--
-  ) {
-
-    if (
-      game.grid[r][column] === null
-    ) {
-
-      row = r;
-      break;
-
-    }
-  }
-
-  if (row === -1) {
-
-    return false;
-
-  }
-
-  game.grid[row][column] =
-    player;
-
-  if (
-    checkWin(
-      game.grid,
-      row,
-      column,
-      player
-    )
-  ) {
-
-    game.winner =
-      player;
-
-  }
-
-  return true;
-}
-
-
-/* =========================
-   BOT MOVE
-========================= */
-
-function botMove() {
+function playerMove(
+  column
+) {
 
   if (
     !game ||
     game.winner ||
     game.draw
-  ) return;
+  ) {
 
-  const column =
-    chooseBotColumn();
+    return;
 
-  dropPiece(
-    column,
-    botTeam
-  );
+  }
 
-  render();
 
-  if (game.winner) {
+  if (
+    game.turn !== "player"
+  ) {
+
+    return;
+
+  }
+
+
+  const row =
+    findOpenRow(
+      column
+    );
+
+
+  if (row === -1) {
+
+    return;
+
+  }
+
+
+  game.board[row][column] =
+    player.team;
+
+
+  if (
+    checkWin(
+      game.board,
+      row,
+      column,
+      player.team
+    )
+  ) {
+
+    game.winner =
+      player.team;
+
+    renderBoard();
 
     setTimeout(
-      finishGame,
-      600
+      endGame,
+      500
     );
 
     return;
+
   }
 
-  if (isBoardFull()) {
+
+  if (boardFull()) {
 
     game.draw = true;
 
+    renderBoard();
+
     setTimeout(
-      finishGame,
-      600
+      endGame,
+      500
     );
 
     return;
+
   }
 
-  game.turn = me.team;
 
-  showMotivationalMessage();
+  game.turn =
+    "bot";
 
-  render();
+
+  renderBoard();
+
+
+  setTimeout(
+    botMove,
+    700
+  );
+
 }
 
 
-/* =========================
-   MOTIVATIONAL MESSAGE
-========================= */
+/* =========================================
+   BOT MOVE
+========================================= */
 
-function showMotivationalMessage() {
 
-  const challenge =
-    document.getElementById("challenge");
+function botMove() {
 
-  const message =
-    motivationalMessages[
-      Math.floor(
-        Math.random() *
-        motivationalMessages.length
-      )
-    ];
+  if (
+    game.winner ||
+    game.draw
+  ) {
 
-  challenge.textContent =
-    message;
+    return;
+
+  }
+
+
+  const column =
+    chooseBotMove();
+
+
+  const row =
+    findOpenRow(
+      column
+    );
+
+
+  if (row === -1) {
+
+    return;
+
+  }
+
+
+  game.board[row][column] =
+    bot.team;
+
+
+  if (
+    checkWin(
+      game.board,
+      row,
+      column,
+      bot.team
+    )
+  ) {
+
+    game.winner =
+      bot.team;
+
+    renderBoard();
+
+    setTimeout(
+      endGame,
+      500
+    );
+
+    return;
+
+  }
+
+
+  if (boardFull()) {
+
+    game.draw = true;
+
+    renderBoard();
+
+    setTimeout(
+      endGame,
+      500
+    );
+
+    return;
+
+  }
+
+
+  game.turn =
+    "player";
+
+
+  showMotivation();
+
+  renderBoard();
+
 }
 
 
-/* =========================
-   BOT AI
-========================= */
-
-function chooseBotColumn() {
-
-  const columns =
-    availableColumns();
-
-  if (!columns.length) {
-    return 0;
-  }
+/* =========================================
+   FIND OPEN ROW
+========================================= */
 
 
-  const winningMove =
-    findWinningMove(botTeam);
+function findOpenRow(
+  column
+) {
 
-  if (winningMove !== null) {
-    return winningMove;
-  }
+  for (
+    let row = 5;
+    row >= 0;
+    row--
+  ) {
 
+    if (
+      game.board[row][column]
+      === null
+    ) {
 
-  if (difficulty !== "easy") {
+      return row;
 
-    const blockingMove =
-      findWinningMove(me.team);
-
-    if (blockingMove !== null) {
-      return blockingMove;
     }
+
   }
 
 
-  if (difficulty === "hard") {
+  return -1;
+
+}
+
+
+/* =========================================
+   BOT AI
+========================================= */
+
+
+function chooseBotMove() {
+
+  const available =
+    getAvailableColumns();
+
+
+  if (!available.length) {
+
+    return 0;
+
+  }
+
+
+  const winning =
+    findWinningMove(
+      bot.team
+    );
+
+
+  if (
+    winning !== null
+  ) {
+
+    return winning;
+
+  }
+
+
+  if (
+    difficulty !== "easy"
+  ) {
+
+    const blocking =
+      findWinningMove(
+        player.team
+      );
+
+
+    if (
+      blocking !== null
+    ) {
+
+      return blocking;
+
+    }
+
+  }
+
+
+  if (
+    difficulty === "hard"
+  ) {
 
     const preferred =
-      [3,2,4,1,5,0,6];
+      [
+        3,
+        2,
+        4,
+        1,
+        5,
+        0,
+        6
+      ];
+
 
     for (
-      const column of preferred
+      const column
+      of preferred
     ) {
 
       if (
-        columns.includes(column)
+        available.includes(
+          column
+        )
       ) {
 
         return column;
 
       }
+
     }
+
   }
 
 
-  return columns[
+  return available[
     Math.floor(
-      Math.random() *
-      columns.length
+      Math.random()
+      * available.length
     )
   ];
+
 }
 
 
-/* =========================
+/* =========================================
    AVAILABLE COLUMNS
-========================= */
+========================================= */
 
-function availableColumns() {
+
+function getAvailableColumns() {
 
   return Array
     .from(
       { length: 7 },
-      (_, column) => column
+      (_, column) =>
+        column
     )
     .filter(
       column =>
-        game.grid[0][column] === null
+        game.board[0][column]
+        === null
     );
+
 }
 
 
-/* =========================
+/* =========================================
    FIND WINNING MOVE
-========================= */
+========================================= */
 
-function findWinningMove(player) {
 
-  const columns =
-    availableColumns();
+function findWinningMove(
+  team
+) {
+
+  const available =
+    getAvailableColumns();
+
 
   for (
-    const column of columns
+    const column
+    of available
   ) {
 
-    const testGrid =
-      game.grid.map(
-        row => row.slice()
+    const test =
+      game.board.map(
+        row =>
+          row.slice()
       );
 
-    let row = -1;
 
-    for (
-      let r = 5;
-      r >= 0;
-      r--
-    ) {
+    const row =
+      findTestRow(
+        test,
+        column
+      );
 
-      if (
-        testGrid[r][column] === null
-      ) {
 
-        row = r;
-        break;
-
-      }
+    if (row === -1) {
+      continue;
     }
 
-    if (row === -1) continue;
 
-    testGrid[row][column] =
-      player;
+    test[row][column] =
+      team;
+
 
     if (
       checkWin(
-        testGrid,
+        test,
         row,
         column,
-        player
+        team
       )
     ) {
 
       return column;
 
     }
+
   }
 
+
   return null;
+
 }
 
 
-/* =========================
+/* =========================================
+   TEST ROW
+========================================= */
+
+
+function findTestRow(
+  board,
+  column
+) {
+
+  for (
+    let row = 5;
+    row >= 0;
+    row--
+  ) {
+
+    if (
+      board[row][column]
+      === null
+    ) {
+
+      return row;
+
+    }
+
+  }
+
+
+  return -1;
+
+}
+
+
+/* =========================================
    CHECK WIN
-========================= */
+========================================= */
+
 
 function checkWin(
-  grid,
+  board,
   row,
   column,
-  player
+  team
 ) {
 
   const directions = [
 
-    [1,0],
-    [0,1],
-    [1,1],
-    [1,-1]
+    [1, 0],
+
+    [0, 1],
+
+    [1, 1],
+
+    [1, -1]
 
   ];
+
 
   for (
     const [dr, dc]
     of directions
   ) {
 
-    let count = 1;
+    let total = 1;
+
 
     for (
       const direction
-      of [-1,1]
+      of [-1, 1]
     ) {
 
       let r =
-        row +
-        direction * dr;
+        row
+        + direction * dr;
+
 
       let c =
-        column +
-        direction * dc;
+        column
+        + direction * dc;
+
 
       while (
         r >= 0 &&
         r < 6 &&
         c >= 0 &&
         c < 7 &&
-        grid[r][c] === player
+        board[r][c] === team
       ) {
 
-        count++;
+        total++;
+
 
         r +=
           direction * dr;
 
+
         c +=
           direction * dc;
+
       }
+
     }
 
-    if (count >= 4) {
+
+    if (total >= 4) {
+
       return true;
+
     }
+
   }
 
+
   return false;
+
 }
 
 
-/* =========================
+/* =========================================
    BOARD FULL
-========================= */
+========================================= */
 
-function isBoardFull() {
 
-  return game.grid[0]
+function boardFull() {
+
+  return game.board[0]
     .every(
       cell =>
         cell !== null
     );
+
 }
 
 
-/* =========================
-   END GAME
-========================= */
-
-function finishGame() {
-
-  render();
-
-  const end =
-    document.getElementById("end");
-
-  const result =
-    document.getElementById("result");
+/* =========================================
+   MOTIVATIONAL MESSAGE
+========================================= */
 
 
-  if (game.winner) {
+function showMotivation() {
 
-    if (
-      game.winner === me.team
-    ) {
-
-      result.textContent =
-        "🎉 YOU CONNECTED 4!";
-
-    } else {
-
-      result.textContent =
-        "🤖 THE CONNECTION BOT CONNECTED 4!";
-
-    }
-
-  } else {
-
-    result.textContent =
-      "🤝 GREAT GAME — IT'S A DRAW!";
-
-  }
-
-
-  end.classList.remove("hidden");
-
-  end.scrollIntoView({
-    behavior: "smooth"
-  });
-
-
-  showEndChallenge();
-}
-
-
-/* =========================
-   FINAL CHALLENGE
-========================= */
-
-function showEndChallenge() {
-
-  const challenge =
-    document.getElementById("challenge");
-
-  const finalMessage =
-    endMessages[
+  const message =
+    motivations[
       Math.floor(
-        Math.random() *
-        endMessages.length
+        Math.random()
+        * motivations.length
       )
     ];
 
-  challenge.innerHTML =
-    "<strong>" +
-    finalMessage +
-    "</strong>" +
-    "<br><br>" +
-    "Your Connection Challenge:" +
-    "<br><br>" +
-    "<span style='color:#7041a6'>" +
-    pickChallenge() +
-    "</span>";
-}
-
-
-/* =========================
-   RANDOM CHALLENGE
-========================= */
-
-function pickChallenge() {
-
-  return challenges[
-    Math.floor(
-      Math.random() *
-      challenges.length
-    )
-  ];
-}
-
-
-/* =========================
-   PLAY AGAIN
-========================= */
-
-function playAgain() {
-
-  game = null;
-
-  selectedFeeling = null;
 
   document
-    .getElementById("end")
-    .classList.add("hidden");
+    .getElementById(
+      "motivation"
+    )
+    .textContent =
+      message;
+
+}
+
+
+/* =========================================
+   END GAME
+========================================= */
+
+
+function endGame() {
 
   document
     .getElementById("game")
     .classList.add("hidden");
 
-  document
-    .getElementById("setup")
-    .classList.add("hidden");
 
   document
-    .getElementById("checkin")
-    .classList.remove("hidden");
-
-  document
-    .querySelectorAll(".feeling")
-    .forEach(
-      button =>
-        button.classList.remove("selected")
+    .getElementById(
+      "gameOver"
+    )
+    .classList.remove(
+      "hidden"
     );
 
-  document
-    .getElementById("checkinMessage")
-    .classList.add("hidden");
+
+  const result =
+    document.getElementById(
+      "gameResult"
+    );
+
+
+  if (
+    game.winner ===
+    player.team
+  ) {
+
+    result.textContent =
+      "🎉 YOU CONNECTED 4!";
+
+  }
+
+  else if (
+    game.winner ===
+    bot.team
+  ) {
+
+    result.textContent =
+      "🤖 THE CONNECTION BOT CONNECTED 4!";
+
+  }
+
+  else {
+
+    result.textContent =
+      "🤝 GREAT GAME! IT'S A DRAW!";
+
+  }
+
+
+  const finalMessage =
+    finalMessages[
+      Math.floor(
+        Math.random()
+        * finalMessages.length
+      )
+    ];
+
 
   document
-    .getElementById("continueButton")
-    .disabled = true;
+    .getElementById(
+      "finalMessage"
+    )
+    .textContent =
+      finalMessage;
+
+
+  document
+    .getElementById(
+      "challenge"
+    )
+    .textContent =
+      challenges[
+        Math.floor(
+          Math.random()
+          * challenges.length
+        )
+      ];
+
+
+  connections++;
+
+
+  localStorage.setItem(
+    "dcngConnections",
+    connections
+  );
+
+
+  updateCounter();
+
+
+  document
+    .getElementById(
+      "gameOver"
+    )
+    .scrollIntoView({
+      behavior: "smooth"
+    });
+
 }
 
 
-/* =========================
-   CONNECTION COUNTER
-========================= */
+/* =========================================
+   COUNTER
+========================================= */
+
 
 function updateCounter() {
 
   document
-    .getElementById("counter")
+    .getElementById(
+      "counter"
+    )
     .textContent =
-      connectionCount;
+      connections;
 
 }
+
+
+/* =========================================
+   RESTART
+========================================= */
+
+
+function restartGame() {
+
+  game = null;
+
+  selectedFeeling = null;
+
+
+  document
+    .getElementById(
+      "gameOver"
+    )
+    .classList.add(
+      "hidden"
+    );
+
+
+  document
+    .getElementById(
+      "setup"
+    )
+    .classList.add(
+      "hidden"
+    );
+
+
+  document
+    .getElementById(
+      "game"
+    )
+    .classList.add(
+      "hidden"
+    );
+
+
+  document
+    .getElementById(
+      "checkin"
+    )
+    .classList.remove(
+      "hidden"
+    );
+
+
+  document
+    .querySelectorAll(
+      ".feeling"
+    )
+    .forEach(
+      button =>
+        button.classList.remove(
+          "selected"
+        )
+    );
+
+
+  document
+    .getElementById(
+      "feelingMessage"
+    )
+    .classList.add(
+      "hidden"
+    );
+
+
+  document
+    .getElementById(
+      "continueBtn"
+    )
+    .disabled =
+      true;
+
+}
+
+
+/* =========================================
+   START
+========================================= */
 
 updateCounter();
 
 </script>
+
+</body>
+
+</html>
