@@ -574,72 +574,62 @@ button:disabled{
 
 <script>
 
-/* =========================================
-   CONNECTION CHALLENGES
-========================================= */
-
-const challenges = [
-
-  "Text someone you miss.",
-
-  "Call someone you have not talked to in a while.",
-
-  "Check in with your battle buddy.",
-
-  "Ask someone: “How are you really doing?”",
-
-  "Tell someone you appreciate them.",
-
-  "Thank someone who has supported you.",
-
-  "Introduce yourself to someone you do not know.",
-
-  "Invite someone to lunch or a break.",
-
-  "Send someone an encouraging message.",
-
-  "Ask a teammate how you can support them.",
-
-  "Reconnect with someone from your past.",
-
-  "Tell someone: “You matter to me.”",
-
-  "Take a moment to listen without trying to fix anything.",
-
-  "Ask someone what they are looking forward to.",
-
-  "Check on someone who may be having a hard week.",
-
-  "Reach out to someone who has been quiet lately."
-
+const motivationalMessages = [
+  "Your presence matters. Keep going. 💜",
+  "One conversation can make a difference. Check in on someone today.",
+  "You never know who needs to hear from you. Reach out. 🩵",
+  "Connection can be a powerful form of support.",
+  "A simple 'How are you?' can open an important conversation.",
+  "You don't have to have all the answers. Sometimes being there is enough.",
+  "Keep checking in. Keep reaching out. Keep connecting.",
+  "Someone in your circle may need you more than you realize.",
+  "Small acts of connection can have a lasting impact.",
+  "You matter. Your teammates matter. Your connection matters."
 ];
 
+const endMessages = [
+  "Suicide prevention starts with connection. Check in. Listen. Be there.",
+  "You don't have to be a professional to make a difference. Sometimes being present matters most.",
+  "If someone is struggling, don't be afraid to ask how they're really doing.",
+  "Connection saves lives. Keep reaching out and keep checking in.",
+  "Your next conversation could be the one someone remembers.",
+  "Be the person who checks in. Be the person who listens. Be the connection."
+];
 
-/* =========================================
-   GAME VARIABLES
-========================================= */
+const challenges = [
+  "Text someone you miss.",
+  "Call someone you have not talked to in a while.",
+  "Check in with your battle buddy.",
+  "Ask someone: “How are you really doing?”",
+  "Tell someone you appreciate them.",
+  "Thank someone who has supported you.",
+  "Introduce yourself to someone you do not know.",
+  "Invite someone to lunch or a break.",
+  "Send someone an encouraging message.",
+  "Ask a teammate how you can support them.",
+  "Reconnect with someone from your past.",
+  "Tell someone: “You matter to me.”",
+  "Take a moment to listen without trying to fix anything.",
+  "Ask someone what they are looking forward to.",
+  "Check on someone who may be having a hard week.",
+  "Reach out to someone who has been quiet lately."
+];
 
 let me = null;
-
 let game = null;
-
-let challengeDone = false;
-
 let selectedFeeling = null;
-
 let connectionCount =
   Number(localStorage.getItem("connect4Connections")) || 0;
 
 let botTeam = null;
-
 let difficulty = "medium";
 
 
-/* =========================================
+/* =========================
    FEELING CHECK-IN
-========================================= */
+========================= */
 
-function selectFeeling(button, feeling){
+function selectFeeling(button, feeling) {
 
   document
     .querySelectorAll(".feeling")
@@ -650,9 +640,6 @@ function selectFeeling(button, feeling){
   button.classList.add("selected");
 
   selectedFeeling = feeling;
-
-  const message =
-    document.getElementById("checkinMessage");
 
   const messages = {
 
@@ -666,32 +653,33 @@ function selectFeeling(button, feeling){
       "Thank you for being honest. You don't have to carry everything by yourself. Connection matters.",
 
     stressed:
-      "Take a breath. You don't have to figure everything out alone. Consider checking in with someone you trust.",
+      "Take a breath. You don't have to figure everything out alone.",
 
     talk:
-      "You're not alone. Consider reaching out to someone you trust or a leader, battle buddy, friend, or family member."
+      "You're not alone. Consider reaching out to someone you trust."
   };
+
+  const message =
+    document.getElementById("checkinMessage");
 
   message.textContent =
     messages[feeling];
 
   message.classList.remove("hidden");
 
-  document
-    .getElementById("continueButton")
-    .disabled = false;
+  document.getElementById(
+    "continueButton"
+  ).disabled = false;
 }
 
 
-/* =========================================
-   MOVE FROM CHECK-IN TO GAME SETUP
-========================================= */
+/* =========================
+   CONTINUE
+========================= */
 
-function continueToGame(){
+function continueToGame() {
 
-  if(!selectedFeeling){
-    return;
-  }
+  if (!selectedFeeling) return;
 
   document
     .getElementById("checkin")
@@ -700,135 +688,47 @@ function continueToGame(){
   document
     .getElementById("setup")
     .classList.remove("hidden");
-
 }
 
 
-/* =========================================
-   RANDOM CHALLENGE
-========================================= */
-
-function pickChallenge(){
-
-  return challenges[
-    Math.floor(
-      Math.random() * challenges.length
-    )
-  ];
-
-}
-
-
-/* =========================================
-   NEW CHALLENGE
-========================================= */
-
-function newChallenge(){
-
-  document
-    .getElementById("challenge")
-    .textContent =
-      pickChallenge();
-
-  challengeDone = false;
-
-  const button =
-    document.getElementById("done");
-
-  button.disabled = true;
-
-}
-
-
-/* =========================================
-   COMPLETE CONNECTION CHALLENGE
-========================================= */
-
-function completeChallenge(){
-
-  if(
-    !game ||
-    game.winner ||
-    game.turn !== me.team
-  ){
-    return;
-  }
-
-  challengeDone = true;
-
-  incrementConnectionCounter();
-
-  const button =
-    document.getElementById("done");
-
-  button.disabled = true;
-
-  document
-    .getElementById("challenge")
-    .textContent =
-      "Connection made! Now make your move.";
-
-  render();
-
-}
-
-
-/* =========================================
-   CONNECTION COUNTER
-========================================= */
-
-function incrementConnectionCounter(){
-
-  connectionCount++;
-
-  localStorage.setItem(
-    "connect4Connections",
-    connectionCount
-  );
-
-  updateCounter();
-
-}
-
-
-function updateCounter(){
-
-  document
-    .getElementById("counter")
-    .textContent =
-      connectionCount;
-
-}
-
-
-/* =========================================
+/* =========================
    START GAME
-========================================= */
+========================= */
 
-function startComputerGame(){
-
-  const nameInput =
-    document.getElementById("name");
+function startComputerGame() {
 
   const name =
-    nameInput.value.trim() || "Player";
+    document.getElementById("name")
+      .value.trim() || "Player";
 
-  const team =
-    document.getElementById("team").value;
+  me = {
+    name: name,
+    team:
+      document.getElementById("team").value
+  };
 
   difficulty =
     document.getElementById("difficulty").value;
 
-  me = {
-    name:name,
-    team:team
-  };
-
   botTeam =
-    team === "teal"
+    me.team === "teal"
       ? "purple"
       : "teal";
 
+  game = {
+
+    grid:
+      Array.from(
+        { length: 6 },
+        () => Array(7).fill(null)
+      ),
+
+    turn: me.team,
+
+    winner: null,
+
+    draw: false
+  };
 
   document
     .getElementById("setup")
@@ -842,79 +742,48 @@ function startComputerGame(){
     .getElementById("end")
     .classList.add("hidden");
 
-
   document
     .getElementById("p1")
     .textContent =
-      (team === "teal" ? "🩵 " : "💜 ")
+      (me.team === "teal" ? "🩵 " : "💜 ")
       + name;
-
 
   document
     .getElementById("p2")
     .textContent =
-      (botTeam === "teal"
-        ? "🩵 "
-        : "💜 ")
+      (botTeam === "teal" ? "🩵 " : "💜 ")
       + "Connection Bot";
 
-
-  game = {
-
-    grid:
-      Array.from(
-        {length:6},
-        () => Array(7).fill(null)
-      ),
-
-    turn:team,
-
-    winner:null,
-
-    draw:false
-
-  };
-
-
-  newChallenge();
+  showMotivationalMessage();
 
   render();
-
 }
 
 
-/* =========================================
+/* =========================
    RENDER BOARD
-========================================= */
+========================= */
 
-function render(){
+function render() {
 
-  if(!game){
-    return;
-  }
+  if (!game) return;
 
   const board =
     document.getElementById("board");
 
   board.innerHTML = "";
 
-
   game.grid.forEach(
-    (row,rowIndex) => {
+    (row, rowIndex) => {
 
       row.forEach(
-        (value,colIndex) => {
+        (value, colIndex) => {
 
           const cell =
             document.createElement("div");
 
           cell.className =
             "cell " + (value || "");
-
-          cell.setAttribute(
-            "aria-label",
-            "Column " + (colIndex + 1)
-          );
 
           cell.onclick =
             () => playerMove(colIndex);
@@ -931,457 +800,382 @@ function render(){
   const turn =
     document.getElementById("turn");
 
-
-  if(game.winner){
+  if (game.winner) {
 
     turn.textContent =
       game.winner === me.team
         ? "🎉 YOU WON!"
-        : "🤖 CONNECTION BOT WON!";
+        : "🤖 BOT WON!";
 
-  }
-
-  else if(game.draw){
+  } else if (game.draw) {
 
     turn.textContent =
       "🤝 IT'S A DRAW!";
 
-  }
-
-  else if(game.turn === me.team){
+  } else if (game.turn === me.team) {
 
     turn.textContent =
       "YOUR TURN";
 
-  }
-
-  else{
+  } else {
 
     turn.textContent =
       "BOT'S TURN";
 
   }
-
-
-  const done =
-    document.getElementById("done");
-
-
-  done.disabled =
-    game.turn !== me.team ||
-    !challengeDone ||
-    !!game.winner ||
-    game.draw;
-
 }
 
 
-/* =========================================
+/* =========================
    PLAYER MOVE
-========================================= */
+========================= */
 
-function playerMove(column){
+function playerMove(column) {
 
-  if(!game){
-    return;
-  }
+  if (!game) return;
 
-  if(game.winner || game.draw){
-    return;
-  }
+  if (game.winner || game.draw) return;
 
-  if(game.turn !== me.team){
-    return;
-  }
+  if (game.turn !== me.team) return;
 
-  if(!challengeDone){
-    return;
-  }
-
-
-  const dropped =
+  const moved =
     dropPiece(
       column,
       me.team
     );
 
+  if (!moved) return;
 
-  if(!dropped){
+  render();
+
+  if (game.winner) {
+
+    setTimeout(
+      finishGame,
+      500
+    );
+
     return;
   }
 
-
-  challengeDone = false;
-
-
-  if(game.winner){
-
-    finishGame();
-
-    return;
-
-  }
-
-
-  if(isBoardFull()){
+  if (isBoardFull()) {
 
     game.draw = true;
 
-    finishGame();
+    setTimeout(
+      finishGame,
+      500
+    );
 
     return;
-
   }
-
 
   game.turn = botTeam;
 
   render();
 
-
   setTimeout(
     botMove,
-    500
+    700
   );
-
 }
 
 
-/* =========================================
+/* =========================
    DROP PIECE
-========================================= */
+========================= */
 
-function dropPiece(column, player){
+function dropPiece(column, player) {
 
   let row = -1;
 
-
-  for(
+  for (
     let r = 5;
     r >= 0;
     r--
-  ){
+  ) {
 
-    if(
+    if (
       game.grid[r][column] === null
-    ){
+    ) {
 
       row = r;
-
       break;
 
     }
-
   }
 
-
-  if(row === -1){
+  if (row === -1) {
 
     return false;
 
   }
 
-
   game.grid[row][column] =
     player;
 
-
-  if(
+  if (
     checkWin(
       game.grid,
       row,
       column,
       player
     )
-  ){
+  ) {
 
     game.winner =
       player;
 
   }
 
-
   return true;
-
 }
 
 
-/* =========================================
+/* =========================
    BOT MOVE
-========================================= */
+========================= */
 
-function botMove(){
+function botMove() {
 
-  if(
+  if (
     !game ||
     game.winner ||
     game.draw
-  ){
-
-    return;
-
-  }
-
+  ) return;
 
   const column =
     chooseBotColumn();
-
 
   dropPiece(
     column,
     botTeam
   );
 
+  render();
 
-  if(game.winner){
+  if (game.winner) {
 
-    finishGame();
+    setTimeout(
+      finishGame,
+      600
+    );
 
     return;
-
   }
 
-
-  if(isBoardFull()){
+  if (isBoardFull()) {
 
     game.draw = true;
 
-    finishGame();
+    setTimeout(
+      finishGame,
+      600
+    );
 
     return;
-
   }
 
+  game.turn = me.team;
 
-  game.turn =
-    me.team;
-
-
-  newChallenge();
+  showMotivationalMessage();
 
   render();
-
 }
 
 
-/* =========================================
-   AVAILABLE COLUMNS
-========================================= */
+/* =========================
+   MOTIVATIONAL MESSAGE
+========================= */
 
-function availableColumns(){
+function showMotivationalMessage() {
+
+  const challenge =
+    document.getElementById("challenge");
+
+  const message =
+    motivationalMessages[
+      Math.floor(
+        Math.random() *
+        motivationalMessages.length
+      )
+    ];
+
+  challenge.textContent =
+    message;
+}
+
+
+/* =========================
+   BOT AI
+========================= */
+
+function chooseBotColumn() {
+
+  const columns =
+    availableColumns();
+
+  if (!columns.length) {
+    return 0;
+  }
+
+
+  const winningMove =
+    findWinningMove(botTeam);
+
+  if (winningMove !== null) {
+    return winningMove;
+  }
+
+
+  if (difficulty !== "easy") {
+
+    const blockingMove =
+      findWinningMove(me.team);
+
+    if (blockingMove !== null) {
+      return blockingMove;
+    }
+  }
+
+
+  if (difficulty === "hard") {
+
+    const preferred =
+      [3,2,4,1,5,0,6];
+
+    for (
+      const column of preferred
+    ) {
+
+      if (
+        columns.includes(column)
+      ) {
+
+        return column;
+
+      }
+    }
+  }
+
+
+  return columns[
+    Math.floor(
+      Math.random() *
+      columns.length
+    )
+  ];
+}
+
+
+/* =========================
+   AVAILABLE COLUMNS
+========================= */
+
+function availableColumns() {
 
   return Array
     .from(
-      {length:7},
-      (_,column) => column
+      { length: 7 },
+      (_, column) => column
     )
     .filter(
       column =>
         game.grid[0][column] === null
     );
-
 }
 
 
-/* =========================================
-   BOT AI
-========================================= */
-
-function chooseBotColumn(){
-
-  const columns =
-    availableColumns();
-
-
-  if(!columns.length){
-
-    return 0;
-
-  }
-
-
-  /* HARD/MEDIUM:
-     Try to win */
-
-  const winningMove =
-    findWinningMove(botTeam);
-
-
-  if(winningMove !== null){
-
-    return winningMove;
-
-  }
-
-
-  /* MEDIUM/HARD:
-     Block player */
-
-  if(
-    difficulty !== "easy"
-  ){
-
-    const blockingMove =
-      findWinningMove(me.team);
-
-
-    if(
-      blockingMove !== null
-    ){
-
-      return blockingMove;
-
-    }
-
-  }
-
-
-  /* HARD:
-     Prefer center */
-
-  if(
-    difficulty === "hard"
-  ){
-
-    const preferred =
-      [3,2,4,1,5,0,6];
-
-
-    for(
-      const column of preferred
-    ){
-
-      if(
-        columns.includes(column)
-      ){
-
-        return column;
-
-      }
-
-    }
-
-  }
-
-
-  /* EASY:
-     Random */
-
-  return columns[
-    Math.floor(
-      Math.random() * columns.length
-    )
-  ];
-
-}
-
-
-/* =========================================
+/* =========================
    FIND WINNING MOVE
-========================================= */
+========================= */
 
-function findWinningMove(player){
+function findWinningMove(player) {
 
   const columns =
     availableColumns();
 
-
-  for(
+  for (
     const column of columns
-  ){
+  ) {
 
     const testGrid =
       game.grid.map(
         row => row.slice()
       );
 
-
     let row = -1;
 
-
-    for(
+    for (
       let r = 5;
       r >= 0;
       r--
-    ){
+    ) {
 
-      if(
+      if (
         testGrid[r][column] === null
-      ){
+      ) {
 
         row = r;
-
         break;
 
       }
-
     }
 
-
-    if(row === -1){
-      continue;
-    }
-
+    if (row === -1) continue;
 
     testGrid[row][column] =
       player;
 
-
-    if(
+    if (
       checkWin(
         testGrid,
         row,
         column,
         player
       )
-    ){
+    ) {
 
       return column;
 
     }
-
   }
 
-
   return null;
-
 }
 
 
-/* =========================================
+/* =========================
    CHECK WIN
-========================================= */
+========================= */
 
 function checkWin(
   grid,
   row,
   column,
   player
-){
+) {
 
   const directions = [
 
     [1,0],
-
     [0,1],
-
     [1,1],
-
     [1,-1]
 
   ];
 
-
-  for(
-    const [dr,dc] of directions
-  ){
+  for (
+    const [dr, dc]
+    of directions
+  ) {
 
     let count = 1;
 
-
-    for(
-      const direction of [-1,1]
-    ){
+    for (
+      const direction
+      of [-1,1]
+    ) {
 
       let r =
         row +
@@ -1391,14 +1185,13 @@ function checkWin(
         column +
         direction * dc;
 
-
-      while(
+      while (
         r >= 0 &&
         r < 6 &&
         c >= 0 &&
         c < 7 &&
         grid[r][c] === player
-      ){
+      ) {
 
         count++;
 
@@ -1407,48 +1200,39 @@ function checkWin(
 
         c +=
           direction * dc;
-
       }
-
     }
 
-
-    if(count >= 4){
-
+    if (count >= 4) {
       return true;
-
     }
-
   }
 
-
   return false;
-
 }
 
 
-/* =========================================
-   CHECK FOR DRAW
-========================================= */
+/* =========================
+   BOARD FULL
+========================= */
 
-function isBoardFull(){
+function isBoardFull() {
 
   return game.grid[0]
     .every(
-      cell => cell !== null
+      cell =>
+        cell !== null
     );
-
 }
 
 
-/* =========================================
-   FINISH GAME
-========================================= */
+/* =========================
+   END GAME
+========================= */
 
-function finishGame(){
+function finishGame() {
 
   render();
-
 
   const end =
     document.getElementById("end");
@@ -1457,30 +1241,23 @@ function finishGame(){
     document.getElementById("result");
 
 
-  end.classList.remove("hidden");
+  if (game.winner) {
 
-
-  if(game.winner){
-
-    if(
+    if (
       game.winner === me.team
-    ){
+    ) {
 
       result.textContent =
         "🎉 YOU CONNECTED 4!";
 
-    }
-
-    else{
+    } else {
 
       result.textContent =
         "🤖 THE CONNECTION BOT CONNECTED 4!";
 
     }
 
-  }
-
-  else if(game.draw){
+  } else {
 
     result.textContent =
       "🤝 GREAT GAME — IT'S A DRAW!";
@@ -1488,25 +1265,71 @@ function finishGame(){
   }
 
 
+  end.classList.remove("hidden");
+
   end.scrollIntoView({
-    behavior:"smooth"
+    behavior: "smooth"
   });
 
+
+  showEndChallenge();
 }
 
 
-/* =========================================
-   PLAY AGAIN
-========================================= */
+/* =========================
+   FINAL CHALLENGE
+========================= */
 
-function playAgain(){
+function showEndChallenge() {
+
+  const challenge =
+    document.getElementById("challenge");
+
+  const finalMessage =
+    endMessages[
+      Math.floor(
+        Math.random() *
+        endMessages.length
+      )
+    ];
+
+  challenge.innerHTML =
+    "<strong>" +
+    finalMessage +
+    "</strong>" +
+    "<br><br>" +
+    "Your Connection Challenge:" +
+    "<br><br>" +
+    "<span style='color:#7041a6'>" +
+    pickChallenge() +
+    "</span>";
+}
+
+
+/* =========================
+   RANDOM CHALLENGE
+========================= */
+
+function pickChallenge() {
+
+  return challenges[
+    Math.floor(
+      Math.random() *
+      challenges.length
+    )
+  ];
+}
+
+
+/* =========================
+   PLAY AGAIN
+========================= */
+
+function playAgain() {
 
   game = null;
 
-  challengeDone = false;
-
   selectedFeeling = null;
-
 
   document
     .getElementById("end")
@@ -1524,7 +1347,6 @@ function playAgain(){
     .getElementById("checkin")
     .classList.remove("hidden");
 
-
   document
     .querySelectorAll(".feeling")
     .forEach(
@@ -1532,26 +1354,29 @@ function playAgain(){
         button.classList.remove("selected")
     );
 
-
   document
     .getElementById("checkinMessage")
     .classList.add("hidden");
 
-
   document
     .getElementById("continueButton")
     .disabled = true;
-
 }
 
 
-/* =========================================
-   INITIALIZE COUNTER
-========================================= */
+/* =========================
+   CONNECTION COUNTER
+========================= */
+
+function updateCounter() {
+
+  document
+    .getElementById("counter")
+    .textContent =
+      connectionCount;
+
+}
 
 updateCounter();
 
 </script>
-
-</body>
-</html>
